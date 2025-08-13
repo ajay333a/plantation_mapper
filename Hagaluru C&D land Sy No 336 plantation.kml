@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name><![CDATA[Hagaluru C&D land Sy No: 336 plantation]]></name>
+    <Style id="poly-000000-1200-77-normal">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.2</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="poly-000000-1200-77-highlight">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.8</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <StyleMap id="poly-000000-1200-77">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-000000-1200-77-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-000000-1200-77-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Placemark>
+      <name><![CDATA[Hagaluru C&D Sy No:336]]></name>
+      <description><![CDATA[Year: 2024-25<br>Range: Siruguppa<br>Division: Ballary]]></description>
+      <styleUrl>#poly-000000-1200-77</styleUrl>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <tessellate>1</tessellate>
+            <coordinates>
+              76.8951084,15.3865035,0
+              76.8940999,15.3878896,0
+              76.8935098,15.3883861,0
+              76.8928876,15.3883344,0
+              76.8922653,15.3876827,0
+              76.8903877,15.3862655,0
+              76.8901732,15.3852311,0
+              76.8914928,15.3829036,0
+              76.8932523,15.3831105,0
+              76.8948187,15.3835243,0
+              76.8960096,15.3841656,0
+              76.8961706,15.3844863,0
+              76.896192,15.3848897,0
+              76.8960848,15.3851277,0
+              76.8955805,15.3855932,0
+              76.8951084,15.3865035,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>

@@ -1,0 +1,6 @@
+streamlit
+fastkml
+folium
+streamlit-folium
+shapely
+lxml

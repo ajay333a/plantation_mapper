@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name><![CDATA[Hagaluru C&D land Sy No: 336 plantation]]></name>
+    <Style id="line-000000-1200-normal">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.2</width>
+      </LineStyle>
+    </Style>
+    <Style id="line-000000-1200-highlight">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.8</width>
+      </LineStyle>
+    </Style>
+    <StyleMap id="line-000000-1200">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#line-000000-1200-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#line-000000-1200-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-000000-1200-77-normal">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.2</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="poly-000000-1200-77-highlight">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.8</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <StyleMap id="poly-000000-1200-77">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-000000-1200-77-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-000000-1200-77-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Placemark>
+      <name><![CDATA[Hagaluru C&D Sy No:336]]></name>
+      <description><![CDATA[Year: 2024-25<br>Range: Siruguppa<br>Division: Ballary]]></description>
+      <styleUrl>#poly-000000-1200-77</styleUrl>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <tessellate>1</tessellate>
+            <coordinates>
+              76.8951084,15.3865035,0
+              76.8940999,15.3878896,0
+              76.8935098,15.3883861,0
+              76.8928876,15.3883344,0
+              76.8922653,15.3876827,0
+              76.8903877,15.3862655,0
+              76.8901732,15.3852311,0
+              76.8914928,15.3829036,0
+              76.8932523,15.3831105,0
+              76.8948187,15.3835243,0
+              76.8960096,15.3841656,0
+              76.8961706,15.3844863,0
+              76.896192,15.3848897,0
+              76.8960848,15.3851277,0
+              76.8955805,15.3855932,0
+              76.8951084,15.3865035,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>Sample Roadside Plantation</name>
+      <description><![CDATA[Year: 2023-24<br>Range: Siruguppa<br>Division: Ballary]]></description>
+      <styleUrl>#line-000000-1200</styleUrl>
+      <LineString>
+        <tessellate>1</tessellate>
+        <coordinates>
+          76.898204,15.3868602,0
+          76.8977963,15.3875222,0
+          76.8975281,15.388267,0
+          76.8972706,15.3891359,0
+          76.8969917,15.3896428,0
+          76.8964981,15.3903875,0
+          76.8961977,15.3908634,0
+          76.8958008,15.3912875,0
+          76.8951034,15.3915771,0
+          76.8944489,15.3916495,0
+          76.8939661,15.3917943,0
+          76.8935799,15.3920943,0
+          76.8933439,15.3921978,0
+          76.8936979,15.3918047,0
+          76.8939769,15.3916288,0
+          76.8944275,15.3913702,0
+          76.8948996,15.391153,0
+          76.8952321,15.390853,0
+          76.895318,15.3905737,0
+          76.8952536,15.3902945,0
+          76.895318,15.3900565,0
+          76.8954682,15.3897979,0
+          76.8957364,15.3897048,0
+          76.8958544,15.389498,0
+          76.8961656,15.3889394,0
+          76.8962728,15.3884635,0
+          76.8960261,15.3879877,0
+          76.895672,15.3883911,0
+          76.8955755,15.3887428,0
+          76.8953823,15.3890945,0
+          76.8951463,15.3893842,0
+          76.8948566,15.3897566,0
+          76.8947493,15.3902427,0
+          76.8944382,15.3905944,0
+          76.894052,15.3907289,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>
