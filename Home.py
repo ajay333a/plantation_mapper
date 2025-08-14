@@ -27,7 +27,9 @@ st.markdown(
     ### How it works:
     1.  Go to the **Upload Plantation** page to upload your KML or KMZ files.
     2.  The app will process the file and display the plantations on an interactive map.
-    3.  Go to the **Dashboard** to view details, filter plantations, and download the aggregated data.
+    3.  Enter additional details about the plantation, such as Scheme, Number of eedlings and etc and save the data to the database.
+    4.  Go to the **Dashboard** to view details, filter plantations, and download the aggregated data.
+    5.  Use the **Analytics** page to view stats and insights about the plantations
 
     **Use the buttons above or the sidebar to navigate.**
     """
