@@ -15,6 +15,7 @@ st.set_page_config(page_title="Plantation Dashboard", layout="wide")
 st.markdown("<h1 style='text-align: center;'>&#128202; PLANTATION DASHBOARD</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>View, filter, and manage all uploaded plantation data.</p>", unsafe_allow_html=True)
 
+@st.cache_data
 def load_plantations_from_geojson():
     """Loads all plantation data from the GeoJSON file."""
     if not os.path.exists(DATA_FILE):
@@ -45,13 +46,57 @@ def get_unique_attributes(plantations):
     potential_cols = [col for col in df.columns if col not in ['geometry', 'name', 'description', 'area_sq_m', 'length_m']]
     return {col: sorted(df[col].dropna().unique().tolist()) for col in potential_cols if df[col].nunique() > 1}
 
+def handle_selection():
+    """Callback to update map center and zoom based on table selection."""
+    if 'plantation_editor' in st.session_state and st.session_state.plantation_editor['selection']['rows']:
+        try:
+            selected_row_index = st.session_state.plantation_editor['selection']['rows'][0]
+            
+            # Retrieve the data needed for the calculation from session state
+            original_indices = st.session_state.get('original_indices')
+            filtered_plantations = st.session_state.get('filtered_plantations_for_callback')
+
+            if original_indices is not None and filtered_plantations is not None:
+                # Map the editor's selected row index back to the original plantation list index
+                original_plantation_index = original_indices.iloc[selected_row_index]
+                
+                selected_plantation_geom = filtered_plantations[original_plantation_index]['geometry']
+                centroid = selected_plantation_geom.centroid
+                
+                st.session_state['map_center'] = [centroid.y, centroid.x]
+                st.session_state['map_zoom'] = 15
+        except (KeyError, IndexError) as e:
+            st.error(f"An error occurred while handling the selection: {e}")
+
 all_plantations = load_plantations_from_geojson()
+
+if 'map_center' not in st.session_state:
+    st.session_state['map_center'] = [15.3173, 75.7139]
+if 'map_zoom' not in st.session_state:
+    st.session_state['map_zoom'] = 7
 
 if not all_plantations:
     st.info("No plantation data found. Please upload a KML/KMZ file on the 'Upload Plantation' page.")
     st.stop()
 
 st.markdown("---")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("🏠 Home", use_container_width=True):
+        st.switch_page("Home.py")
+
+with col2:
+    if st.button("📤 Upload Plantation", use_container_width=True):
+        st.switch_page("pages/1_Upload_Plantation.py")
+
+with col3:
+    if st.button("📈 Analytics", use_container_width=True):
+        st.switch_page("pages/3_Analytics.py")
+
+st.markdown("---")
+
 st.subheader("Filter and View Data")
 unique_attrs = get_unique_attributes(all_plantations)
 
@@ -69,7 +114,23 @@ if unique_attrs:
 else:
     filtered_plantations = all_plantations
 
-m = folium.Map(location=[15.3173, 75.7139], zoom_start=7)
+show_satellite = st.toggle("Show Satellite Imagery")
+
+# Initialize the map
+m = folium.Map(location=st.session_state['map_center'], zoom_start=st.session_state['map_zoom'], tiles=None)
+
+# Add tile layers based on the toggle
+if show_satellite:
+    folium.TileLayer(
+        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attr='Esri',
+        name='Esri Satellite',
+    ).add_to(m)
+else:
+    folium.TileLayer(
+        tiles='OpenStreetMap',
+        name='OpenStreetMap'
+    ).add_to(m)
 
 if filtered_plantations:
     min_lon, min_lat, max_lon, max_lat = float('inf'), float('inf'), float('-inf'), float('-inf')
@@ -103,87 +164,79 @@ if filtered_plantations:
             tooltip=p['name']
         ).add_to(m)
 
-st_folium(m, width='100%', height=500)
+# Use a key to ensure the map re-renders when the tile layer changes
+map_key = "satellite_map" if show_satellite else "osm_map"
+st_folium(m, key=map_key, width='100%', height=600)
 
 st.markdown("---")
 st.subheader("Filtered Plantation Details")
+st.write("Click on a row in the table to zoom to the plantation on the map.")
 df = pd.DataFrame(filtered_plantations)
 
 # Create the details dataframe only if there is data
 if not df.empty:
+    # Create a mapping from the original index to the filtered list index
+    df['original_index'] = range(len(df))
+
     details = pd.DataFrame()
     details['Plantation Name'] = df.get('name', pd.Series(dtype='str'))
     
     # Get other attributes, excluding description which can be long
-    other_attrs = [col for col in df.columns if col not in ['name', 'geometry', 'area_sq_m', 'length_m', 'description']]
+    other_attrs = [col for col in df.columns if col not in ['name', 'geometry', 'area_sq_m', 'length_m', 'description', 'original_index']]
     for attr in other_attrs:
         details[attr.replace('_', ' ').title()] = df[attr]
         
     details['Area (Hectares)'] = (pd.to_numeric(df.get('area_sq_m', 0)) / 10000).round(2)
     details['Perimeter/Length (km)'] = (pd.to_numeric(df.get('length_m', 0)) / 1000).round(3)
-
-    # Set the index to start from 1
-    details.index = pd.RangeIndex(start=1, stop=len(details) + 1, step=1)
+    details['original_index'] = df['original_index']
 
     # --- Advanced Filtering ---
     with st.expander("Filter Table Records", expanded=True):
-        filtered_df = details.copy()
+        filtered_display_df = details.copy()
 
         num_filter_cols = 3
         # Exclude area and perimeter columns from filter groups
-        filterable_cols = [col for col in details.columns if col not in ['Area (Hectares)', 'Perimeter/Length (km)', 'Number Of Seedlings', 'Plantation Name']]
+        filterable_cols = [col for col in details.columns if col not in ['Area (Hectares)', 'Perimeter/Length (km)', 'Number Of Seedlings', 'Plantation Name', 'original_index']]
         filter_col_groups = [filterable_cols[i:i+num_filter_cols] for i in range(0, len(filterable_cols), num_filter_cols)]
 
         for group in filter_col_groups:
             cols = st.columns(num_filter_cols)
             for i, col_name in enumerate(group):
                 with cols[i]:
-                    # For categorical columns with a reasonable number of unique values, use multiselect
                     if pd.api.types.is_object_dtype(details[col_name].dtype) and details[col_name].nunique() < 20:
                         unique_vals = details[col_name].dropna().unique()
                         selected_vals = st.multiselect(f"Filter by {col_name}", options=unique_vals, key=f"multi_{col_name}")
                         if selected_vals:
-                            filtered_df = filtered_df[filtered_df[col_name].isin(selected_vals)]
-                    # For other object columns (likely free text), use text search
+                            filtered_display_df = filtered_display_df[filtered_display_df[col_name].isin(selected_vals)]
                     elif pd.api.types.is_object_dtype(details[col_name].dtype):
                         search_term = st.text_input(f"Search {col_name}", key=f"search_{col_name}")
                         if search_term:
-                            filtered_df = filtered_df[filtered_df[col_name].astype(str).str.contains(search_term, case=False, na=False)]
-                    # For numeric columns, use a range slider
+                            filtered_display_df = filtered_display_df[filtered_display_df[col_name].astype(str).str.contains(search_term, case=False, na=False)]
                     elif pd.api.types.is_numeric_dtype(details[col_name].dtype):
                         min_val, max_val = float(details[col_name].min()), float(details[col_name].max())
                         if min_val < max_val:
-                            selected_range = st.slider(
-                                f"Filter by {col_name}",
-                                min_value=min_val,
-                                max_value=max_val,
-                                value=(min_val, max_val),
-                                key=f"slider_{col_name}"
-                            )
+                            selected_range = st.slider(f"Filter by {col_name}", min_value=min_val, max_value=max_val, value=(min_val, max_val), key=f"slider_{col_name}")
                             if selected_range != (min_val, max_val):
-                                filtered_df = filtered_df[filtered_df[col_name].between(selected_range[0], selected_range[1])]
+                                filtered_display_df = filtered_display_df[filtered_display_df[col_name].between(selected_range[0], selected_range[1])]
                         else:
                             st.write(f"{col_name}: {min_val}")
     
-    # Display the final dataframe
-    if not filtered_df.empty:
-        # Calculate totals
-        total_area = filtered_df['Area (Hectares)'].sum()
-        total_length = filtered_df['Perimeter/Length (km)'].sum()
-
-        # Create a total row as a DataFrame
-        total_row = pd.DataFrame({
-            'Plantation Name': ['Total'],
-            'Area (Hectares)': [total_area],
-            'Perimeter/Length (km)': [total_length]
-        })
-
-        # Concatenate with the filtered dataframe for display
-        display_df = pd.concat([filtered_df, total_row], ignore_index=True)
+    if not filtered_display_df.empty:
         
-        st.dataframe(display_df)
-    else:
-        st.dataframe(filtered_df)
+        # Store the necessary data in session state for the callback
+        st.session_state['original_indices'] = filtered_display_df['original_index']
+        st.session_state['filtered_plantations_for_callback'] = filtered_plantations
+        
+        display_df_for_editor = filtered_display_df.drop(columns=['original_index'])
+
+        st.data_editor(
+            display_df_for_editor,
+            key="plantation_editor",
+            use_container_width=True,
+            hide_index=True,
+            disabled=True  # Make the table read-only
+        )
+
 
 else:
     st.info("No data to display based on the filters selected above.")

@@ -47,6 +47,23 @@ df['area_ha'] = (df['area_sq_m'] / 10000).round(2)
 df['length_km'] = (df['length_m'] / 1000).round(3)
 
 st.markdown("---")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("🏠 Home", use_container_width=True):
+        st.switch_page("Home.py")
+
+with col2:
+    if st.button("📤 Upload Plantation", use_container_width=True):
+        st.switch_page("pages/1_Upload_Plantation.py")
+
+with col3:
+    if st.button("📊 View Dashboard", use_container_width=True):
+        st.switch_page("pages/2_Dashboard.py")
+
+st.markdown("---")
+
 st.header("Key Metrics")
 
 col1, col2, col3 = st.columns(3)
@@ -59,6 +76,8 @@ chart_df = df.drop(columns=['geometry'])
 
 st.markdown("---")
 st.header("Data Visualizations")
+
+
 
 # --- Data Pre-processing for Charts ---
 # Clean up year data - handle strings, ranges (e.g., '2022-23'), and non-numeric values

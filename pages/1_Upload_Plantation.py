@@ -12,19 +12,7 @@ DATA_FILE = "plantations.geojson"
 
 st.set_page_config(page_title="Upload Plantations", layout="wide")
 
-st.markdown(
-    """
-    <style>
-    .main > div {
-        padding-top: 2rem;
-    }
-    .st-emotion-cache-1y4p8pa {
-        padding-top: 2rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+
 
 def save_plantations_to_geojson(new_plantations):
     """Appends new plantation data to the GeoJSON file."""
@@ -134,6 +122,22 @@ if 'map_view_bounds' not in st.session_state:
 # --- Page Title ---
 st.markdown("<h1 style='text-align: center;'>&#127811; UPLOAD PLANTATIONS</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Upload new KML/KMZ files. Plantations will be added to this session for review before saving.</p>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("🏠 Home", use_container_width=True):
+        st.switch_page("Home.py")
+
+with col2:
+    if st.button("📊 View Dashboard", use_container_width=True):
+        st.switch_page("pages/2_Dashboard.py")
+
+with col3:
+    if st.button("📈 Analytics", use_container_width=True):
+        st.switch_page("pages/3_Analytics.py")
+
+st.markdown("---")
 
 # --- File Uploader ---
 col1, col2 = st.columns([3, 1])
