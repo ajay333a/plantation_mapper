@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import folium
 from streamlit_folium import st_folium
 from shapely.geometry import shape
@@ -9,6 +10,7 @@ import os
 DATA_FILE = "plantations.geojson"
 
 st.set_page_config(page_title="Plantation Dashboard", layout="wide")
+
 
 st.markdown("<h1 style='text-align: center;'>&#128202; PLANTATION DASHBOARD</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>View, filter, and manage all uploaded plantation data.</p>", unsafe_allow_html=True)
@@ -117,8 +119,8 @@ if not df.empty:
     for attr in other_attrs:
         details[attr.replace('_', ' ').title()] = df[attr]
         
-    # details['Area (Hectares)'] = (pd.to_numeric(df.get('area_sq_m', 0)) / 10000).round(2)
-    # details['Perimeter/Length (km)'] = (pd.to_numeric(df.get('length_m', 0)) / 1000).round(3)
+    details['Area (Hectares)'] = (pd.to_numeric(df.get('area_sq_m', 0)) / 10000).round(2)
+    details['Perimeter/Length (km)'] = (pd.to_numeric(df.get('length_m', 0)) / 1000).round(3)
 
     # Set the index to start from 1
     details.index = pd.RangeIndex(start=1, stop=len(details) + 1, step=1)
@@ -128,7 +130,8 @@ if not df.empty:
         filtered_df = details.copy()
 
         num_filter_cols = 3
-        # Exclude area and perimeter columns from filter gro        filterable_cols = [col for col in details.columns if col not in ['Area (Hectares)', 'Perimeter/Length (km)', 'Number Of Seedlings', 'Plantation Name']])']]
+        # Exclude area and perimeter columns from filter groups
+        filterable_cols = [col for col in details.columns if col not in ['Area (Hectares)', 'Perimeter/Length (km)', 'Number Of Seedlings', 'Plantation Name']]
         filter_col_groups = [filterable_cols[i:i+num_filter_cols] for i in range(0, len(filterable_cols), num_filter_cols)]
 
         for group in filter_col_groups:
@@ -163,7 +166,24 @@ if not df.empty:
                             st.write(f"{col_name}: {min_val}")
     
     # Display the final dataframe
-    st.dataframe(filtered_df)
+    if not filtered_df.empty:
+        # Calculate totals
+        total_area = filtered_df['Area (Hectares)'].sum()
+        total_length = filtered_df['Perimeter/Length (km)'].sum()
+
+        # Create a total row as a DataFrame
+        total_row = pd.DataFrame({
+            'Plantation Name': ['Total'],
+            'Area (Hectares)': [total_area],
+            'Perimeter/Length (km)': [total_length]
+        })
+
+        # Concatenate with the filtered dataframe for display
+        display_df = pd.concat([filtered_df, total_row], ignore_index=True)
+        
+        st.dataframe(display_df)
+    else:
+        st.dataframe(filtered_df)
 
 else:
     st.info("No data to display based on the filters selected above.")
