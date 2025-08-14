@@ -135,7 +135,7 @@ if not df.empty:
         for group in filter_col_groups:
             cols = st.columns(num_filter_cols)
             for i, col_name in enumerate(group):
-                with cols[i+1]:
+                with cols[i]:
                     # For categorical columns with a reasonable number of unique values, use multiselect
                     if pd.api.types.is_object_dtype(details[col_name].dtype) and details[col_name].nunique() < 20:
                         unique_vals = details[col_name].dropna().unique()
