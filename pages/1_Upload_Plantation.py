@@ -172,7 +172,7 @@ st.markdown("---")
 st.header("Plantations in this Session")
 
 if st.session_state.session_plantations:
-    m = folium.Map(location=[15.3173, 75.7139], zoom_start=7, tiles="CartoDB positron")
+    m = folium.Map(location=[15.3173, 75.7139], zoom_start=7, tiles="OpenStreetMap")
     if st.session_state.map_view_bounds:
         m.fit_bounds(st.session_state.map_view_bounds)
 

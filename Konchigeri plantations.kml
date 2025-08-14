@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Konchigeri plantations</name>
+    <Style id="poly-0288D1-1200-77-normal">
+      <LineStyle>
+        <color>ffd18802</color>
+        <width>1.2</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4dd18802</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="poly-0288D1-1200-77-highlight">
+      <LineStyle>
+        <color>ffd18802</color>
+        <width>1.8</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4dd18802</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <StyleMap id="poly-0288D1-1200-77">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-0288D1-1200-77-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-0288D1-1200-77-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Placemark>
+      <name>Konchegeri Sy No:1 Plantation</name>
+      <description><![CDATA[year: 2024-25<br>Division: Ballary]]></description>
+      <styleUrl>#poly-0288D1-1200-77</styleUrl>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <tessellate>1</tessellate>
+            <coordinates>
+              76.8761326,15.4132445,0
+              76.8754674,15.4142064,0
+              76.8753762,15.4150028,0
+              76.8771948,15.4139272,0
+              76.8780229,15.4130887,0
+              76.8783511,15.412985,0
+              76.8787223,15.4130881,0
+              76.8793466,15.4134598,0
+              76.8784045,15.4148347,0
+              76.8774751,15.4155781,0
+              76.8764813,15.4161974,0
+              76.8752422,15.4165129,0
+              76.8740352,15.4162905,0
+              76.8734075,15.4153027,0
+              76.8734611,15.4138857,0
+              76.8738581,15.4127687,0
+              76.8736435,15.4122515,0
+              76.8743838,15.4119102,0
+              76.8747003,15.4116154,0
+              76.8747593,15.4111965,0
+              76.8753032,15.4111558,0
+              76.8756968,15.4108669,0
+              76.875969,15.4102062,0
+              76.8786915,15.4107259,0
+              76.8761326,15.4132445,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
