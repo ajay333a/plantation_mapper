@@ -227,7 +227,7 @@ if st.session_state.session_plantations:
                                 "division": division,
                                 "range": range_val,
                                 "scheme": scheme,
-                                "year_of_plantation": year,
+                                "year": year,
                                 "plantation_type": plantation_type,
                                 "number_of_seedlings": number_of_seedlings
                             })
