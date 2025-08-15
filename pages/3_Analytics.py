@@ -5,6 +5,32 @@ import os
 from shapely.geometry import shape
 import altair as alt
 
+# --- Chart Helper Function ---
+def create_grouped_bar_chart(data, x_axis, y_axis, color_group, x_title, y_title, color_title, subheader):
+    """Helper function to create a grouped bar chart."""
+    st.subheader(subheader)
+    required_cols = [col for col in [x_axis, color_group] if col is not None]
+    if not all(col in data.columns for col in required_cols):
+        st.warning(f"Missing required data columns for this chart. Please ensure the uploaded data has '{', '.join(required_cols)}' attributes.")
+        return
+    chart_data = data.dropna(subset=required_cols)
+    if x_axis in chart_data.columns:
+        chart_data = chart_data[chart_data[x_axis] != '']
+    if chart_data.empty:
+        st.info(f"No data available to display for '{subheader}'.")
+        return
+    chart = alt.Chart(chart_data).mark_bar().encode(
+        x=alt.X(f'{x_axis}:N', title=x_title, sort='-y'),
+        y=alt.Y(f'count({y_axis}):Q', title=y_title),
+        color=alt.Color(f'{color_group}:N', title=color_title),
+        tooltip=[alt.Tooltip(f'{x_axis}:N', title=x_title),
+                 alt.Tooltip(f'{color_group}:N', title=color_title),
+                 alt.Tooltip('count():Q', title=y_title)]
+    ).interactive()
+    st.altair_chart(chart, use_container_width=True)
+
+
+
 DATA_FILE = "plantations.geojson"
 
 st.set_page_config(page_title="Plantation Analytics", layout="wide")
@@ -26,6 +52,7 @@ def load_plantations_from_geojson():
             properties = feature['properties']
             geom = shape(feature['geometry'])
             properties['geometry'] = geom
+            # ...existing code...
             if 'area_sq_m' not in properties:
                 properties['area_sq_m'] = geom.area * 111319.9**2 if geom.geom_type == 'Polygon' else 0
             if 'length_m' not in properties:
@@ -69,15 +96,9 @@ st.header("Key Metrics")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Plantations", f"{len(df)}")
 col2.metric("Total Area (Hectares)", f"{df['area_ha'].sum():,.2f}")
-col3.metric("Total Seedlings", f"{df['number_of_seedlings'].sum():,.2f}")
+col3.metric("Total Seedlings", f"{df['number_of_seedlings'].sum():,.0f}")
 
-# Prepare a dataframe for charting by removing the geometry
 chart_df = df.drop(columns=['geometry'])
-
-st.markdown("---")
-st.header("Data Visualizations")
-
-
 
 # --- Data Pre-processing for Charts ---
 # Clean up year data - handle strings, ranges (e.g., '2022-23'), and non-numeric values
@@ -91,37 +112,41 @@ else:
 # --- Chart Generation ---
 row1_col1, row1_col2 = st.columns(2)
 row2_col1, row2_col2 = st.columns(2)
+row3_col1, row3_col2 = st.columns(2)
 
-def create_grouped_bar_chart(data, x_axis, y_axis, color_group, x_title, y_title, color_title, subheader):
-    """Helper function to create a grouped bar chart."""
+def create_donut_chart(data, category_col, value_col, subheader, title=''):
+    """Helper function to create a donut chart."""
     st.subheader(subheader)
-    
-    required_cols = [col for col in [x_axis, color_group] if col is not None]
-    
-    # Check if all required columns exist in the dataframe
-    if not all(col in data.columns for col in required_cols):
-        st.warning(f"Missing required data columns for this chart. Please ensure the uploaded data has '{', '.join(required_cols)}' attributes.")
+
+    if not all(col in data.columns for col in [category_col, value_col]):
+        st.warning(f"Missing required data columns for this chart. Please ensure the uploaded data has '{category_col}' and '{value_col}' attributes.")
         return
 
-    # Filter out rows where the essential columns have missing/empty values
-    chart_data = data.dropna(subset=required_cols)
-    if x_axis in chart_data.columns:
-        chart_data = chart_data[chart_data[x_axis] != '']
-    
+    # Ensure value_col is numeric
+    data[value_col] = pd.to_numeric(data[value_col], errors='coerce')
+    chart_data = data.dropna(subset=[category_col, value_col])
+    chart_data = chart_data[chart_data[category_col] != '']
+
     if chart_data.empty:
         st.info(f"No data available to display for '{subheader}'.")
         return
 
-    chart = alt.Chart(chart_data).mark_bar().encode(
-        x=alt.X(f'{x_axis}:N', title=x_title, sort='-y'),
-        y=alt.Y(f'count({y_axis}):Q', title=y_title),
-        color=alt.Color(f'{color_group}:N', title=color_title),
-        tooltip=[alt.Tooltip(f'{x_axis}:N', title=x_title),
-                 alt.Tooltip(f'{color_group}:N', title=color_title),
-                 alt.Tooltip('count():Q', title=y_title)]
-    ).interactive()
-    
+    # Aggregate data
+    agg_data = chart_data.groupby(category_col)[value_col].sum().reset_index()
+
+    chart = alt.Chart(agg_data).mark_arc(innerRadius=70).encode(
+        theta=alt.Theta(field=value_col, type="quantitative", title="Number of Seedlings"),
+        color=alt.Color(field=category_col, type="nominal", title="Scheme"),
+        tooltip=[alt.Tooltip(field=category_col, type="nominal", title="Scheme"),
+                 alt.Tooltip(field=value_col, type="quantitative", title="Total Seedlings", format=',')]
+    ).properties(
+        title=title
+    )
     st.altair_chart(chart, use_container_width=True)
+
+
+
+
 
 # Chart 1: Number of plantation vs year grouped by Type of plantations
 with row1_col1:
@@ -162,6 +187,7 @@ with row2_col1:
         subheader='3. Plantations by Type and Division'
     )
 
+
 # Chart 4: Number of Plantations vs Division grouped by Range
 with row2_col2:
     create_grouped_bar_chart(
@@ -173,4 +199,21 @@ with row2_col2:
         y_title='Number of Plantations',
         color_title='Range',
         subheader='4. Plantations by Division and Range'
+    )
+
+# Donut Chart: Number of seedlings planted under each scheme
+with row3_col1:
+    create_donut_chart(
+        data=chart_df,
+        category_col='scheme',
+        value_col='number_of_seedlings',
+        subheader='5. No of Seedlings Planted Under Each Scheme'
+    )
+
+with row3_col2:
+    create_donut_chart(
+        data=chart_df,
+        category_col='plantation_type',
+        value_col='number_of_seedlings',
+        subheader='6. No of Seedlings Planted Under Each Type of Plantation'
     )

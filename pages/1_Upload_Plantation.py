@@ -118,6 +118,8 @@ if 'session_plantations' not in st.session_state:
     st.session_state.session_plantations = []
 if 'map_view_bounds' not in st.session_state:
     st.session_state.map_view_bounds = None
+if 'added_plantations' not in st.session_state:
+    st.session_state.added_plantations = []
 
 # --- Page Title ---
 st.markdown("<h1 style='text-align: center;'>&#127811; UPLOAD PLANTATIONS</h1>", unsafe_allow_html=True)
@@ -144,7 +146,7 @@ col1, col2 = st.columns([3, 1])
 with col1:
     uploaded_file = st.file_uploader("KML / KMZ FILE", type=["kml", "kmz"], label_visibility="collapsed")
 with col2:
-    upload_button = st.button("Add to Session", use_container_width=True)
+    upload_button = st.button("Add to Map", use_container_width=True)
 
 if uploaded_file and upload_button:
     with st.spinner("Processing KML..."):
@@ -167,22 +169,32 @@ if uploaded_file and upload_button:
         else:
             st.warning("No new plantations extracted from the file.")
 
-# --- Map Display for Session Plantations ---
+# --- Review and Add Plantations ---
 st.markdown("---")
-st.header("Plantations in this Session")
+st.header("Review Pending Plantations")
 
 if st.session_state.session_plantations:
     m = folium.Map(location=[15.3173, 75.7139], zoom_start=7, tiles="OpenStreetMap")
+    
+    # Add satellite tile layer for toggling
+    folium.TileLayer(
+        'Esri.WorldImagery',
+        name='Satellite View',
+        attr='Esri'
+    ).add_to(m)
+
     if st.session_state.map_view_bounds:
         m.fit_bounds(st.session_state.map_view_bounds)
 
     for p in st.session_state.session_plantations:
         popup_html = f"<h4>{p.get('name', 'N/A')}</h4>"
         folium.GeoJson(p['geometry'], popup=folium.Popup(popup_html, max_width=300), tooltip=p['name']).add_to(m)
+    
+    # Add a layer control to the map
+    folium.LayerControl().add_to(m)
+    
     st_folium(m, width='100%', height=400)
 
-    # --- Review and Add Plantations ---
-    st.subheader("Review and Add Plantations")
     st.info("Review the details for each plantation below. You can edit the information before adding it to the main database.")
 
     # Iterate backwards to handle pop correctly without messing up indices
@@ -233,7 +245,7 @@ if st.session_state.session_plantations:
                             })
                             save_plantations_to_geojson([updated_properties])
                             st.session_state.session_plantations.pop(i)
-                            st.success(f"Successfully added '{name}' to the database.")
+                            st.session_state.added_plantations.append(name)
                             st.rerun()
                     elif delete_clicked:
                         removed_name = st.session_state.session_plantations.pop(i).get('name', 'N/A')
@@ -244,4 +256,16 @@ if st.session_state.session_plantations:
                 st.text_input("Area (ha)", value=f"{(p.get('area_sq_m', 0) / 10000):.2f}", disabled=True)
                 st.text_input("Perimeter/Length (km)", value=f"{(p.get('length_m', 0) / 1000):.3f}", disabled=True)
 else:
-    st.info("No plantations uploaded in this session yet. Upload a KML or KMZ file to begin.")
+    # Only show this message if nothing has been uploaded/processed at all in this session
+    if not st.session_state.added_plantations:
+        st.info("No plantations uploaded in this session yet. Upload a KML or KMZ file to begin.")
+
+# --- Display Recently Added Plantations ---
+if st.session_state.added_plantations:
+    st.markdown("---")
+    st.header("Saved Plantations (This Session)")
+    st.success("The following plantations have been successfully saved to the database:")
+    with st.container(border=True):
+        for item in st.session_state.added_plantations:
+            st.write(f"✅ {item}")
+
