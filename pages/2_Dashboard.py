@@ -15,8 +15,7 @@ st.set_page_config(page_title="Plantation Dashboard", layout="wide")
 st.markdown("<h1 style='text-align: center;'>&#128202; PLANTATION DASHBOARD</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>View, filter, and manage all uploaded plantation data.</p>", unsafe_allow_html=True)
 
-@st.cache_data
-def load_plantations_from_geojson(_file_path):
+def load_plantations_from_geojson():
     """Loads all plantation data from the GeoJSON file."""
     if not os.path.exists(DATA_FILE):
         return []
@@ -68,10 +67,7 @@ def handle_selection():
         except (KeyError, IndexError) as e:
             st.error(f"An error occurred while handling the selection: {e}")
 
-def get_data_file_mtime():
-    return os.path.getmtime(DATA_FILE) if os.path.exists(DATA_FILE) else None
-
-all_plantations = load_plantations_from_geojson(get_data_file_mtime())
+all_plantations = load_plantations_from_geojson()
 
 if 'map_center' not in st.session_state:
     st.session_state['map_center'] = [15.3173, 75.7139]

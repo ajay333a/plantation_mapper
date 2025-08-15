@@ -12,7 +12,7 @@ st.set_page_config(page_title="Plantation Analytics", layout="wide")
 st.markdown("<h1 style='text-align: center;'>&#128200; PLANTATION ANALYTICS</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Explore insights and trends from the plantation data.</p>", unsafe_allow_html=True)
 
-def load_plantations_from_geojson(_file_path):
+def load_plantations_from_geojson():
     """Loads all plantation data from the GeoJSON file."""
     if not os.path.exists(DATA_FILE):
         return []
@@ -36,10 +36,7 @@ def load_plantations_from_geojson(_file_path):
         st.error(f"Error loading data file: {e}")
         return []
 
-def get_data_file_mtime():
-    return os.path.getmtime(DATA_FILE) if os.path.exists(DATA_FILE) else None
-
-all_plantations = load_plantations_from_geojson(get_data_file_mtime())
+all_plantations = load_plantations_from_geojson()
 
 if not all_plantations:
     st.info("No plantation data found. Please upload a KML/KMZ file on the 'Upload Plantation' page.")

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Untitled layer</name>
+    <Style id="poly-000000-1200-77-normal">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.2</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <Style id="poly-000000-1200-77-highlight">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.8</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+    <StyleMap id="poly-000000-1200-77">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-000000-1200-77-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-000000-1200-77-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Placemark>
+      <name><![CDATA[Knchigeri C&D land Sy No:1 Block-2]]></name>
+      <description><![CDATA[Year: 2024-25<br>Division: Ballary<br>Range: Siruguppa]]></description>
+      <styleUrl>#poly-000000-1200-77</styleUrl>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <tessellate>1</tessellate>
+            <coordinates>
+              76.880882,15.4076514,0
+              76.881397,15.406493,0
+              76.8817028,15.4065085,0
+              76.8818476,15.4064102,0
+              76.8822124,15.4052518,0
+              76.8836072,15.4031107,0
+              76.8843582,15.4021022,0
+              76.8855598,15.4025832,0
+              76.8867721,15.4029607,0
+              76.8858387,15.4047242,0
+              76.8825557,15.4087271,0
+              76.8822446,15.4088616,0
+              76.8808391,15.4102683,0
+              76.8800237,15.4102165,0
+              76.8797608,15.4103096,0
+              76.8788972,15.4099993,0
+              76.8800666,15.4087582,0
+              76.8803563,15.4084168,0
+              76.880882,15.4076514,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
