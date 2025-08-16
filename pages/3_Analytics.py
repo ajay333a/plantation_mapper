@@ -20,7 +20,7 @@ def create_grouped_bar_chart(data, x_axis, y_axis, color_group, x_title, y_title
         st.info(f"No data available to display for '{subheader}'.")
         return
     chart = alt.Chart(chart_data).mark_bar().encode(
-        x=alt.X(f'{x_axis}:N', title=x_title, sort='-y'),
+        x=alt.X(f'{x_axis}:N', title=x_title, sort='-y', axis=alt.Axis(labelAngle=0)),
         y=alt.Y(f'count({y_axis}):Q', title=y_title),
         color=alt.Color(f'{color_group}:N', title=color_title),
         tooltip=[alt.Tooltip(f'{x_axis}:N', title=x_title),
@@ -98,20 +98,15 @@ col1.metric("Total Plantations", f"{len(df)}")
 col2.metric("Total Area (Hectares)", f"{df['area_ha'].sum():,.2f}")
 col3.metric("Total Seedlings", f"{df['number_of_seedlings'].sum():,.0f}")
 
+st.markdown("---")
+
 chart_df = df.drop(columns=['geometry'])
 
-# --- Data Pre-processing for Charts ---
-# Clean up year data - handle strings, ranges (e.g., '2022-23'), and non-numeric values
-if 'year' in chart_df.columns:
-    # Extract the first 4-digit number to handle formats like '2023-24'
-    chart_df['year_cleaned'] = chart_df['year'].astype(str).str.extract(r'(\d{4})').iloc[:, 0]
-    chart_df['year_cleaned'] = pd.to_numeric(chart_df['year_cleaned'], errors='coerce')
-else:
-    chart_df['year_cleaned'] = None
-
 # --- Chart Generation ---
-row1_col1, row1_col2 = st.columns(2)
-row2_col1, row2_col2 = st.columns(2)
+row1_col1, row1_col2 = st.columns([1,2])
+st.markdown("<hr>", unsafe_allow_html=True)
+row2_col1, row2_col2 = st.columns([2,1])
+st.markdown("<hr>", unsafe_allow_html=True)
 row3_col1, row3_col2 = st.columns(2)
 
 def create_donut_chart(data, category_col, value_col, subheader, title=''):
@@ -134,7 +129,7 @@ def create_donut_chart(data, category_col, value_col, subheader, title=''):
     # Aggregate data
     agg_data = chart_data.groupby(category_col)[value_col].sum().reset_index()
 
-    chart = alt.Chart(agg_data).mark_arc(innerRadius=70).encode(
+    chart = alt.Chart(agg_data).mark_arc(innerRadius=60, outerRadius=120).encode(
         theta=alt.Theta(field=value_col, type="quantitative", title="Number of Seedlings"),
         color=alt.Color(field=category_col, type="nominal", title="Scheme"),
         tooltip=[alt.Tooltip(field=category_col, type="nominal", title="Scheme"),
@@ -150,15 +145,11 @@ def create_donut_chart(data, category_col, value_col, subheader, title=''):
 
 # Chart 1: Number of plantation vs year grouped by Type of plantations
 with row1_col1:
-    create_grouped_bar_chart(
+    create_donut_chart(
         data=chart_df,
-        x_axis='year_cleaned',
-        y_axis='name',
-        color_group='plantation_type',
-        x_title='Year of Plantation',
-        y_title='Number of Plantations',
-        color_title='Plantation Type',
-        subheader='1. Plantations by Year and Type'
+        category_col='scheme',
+        value_col='number_of_seedlings',
+        subheader='1. No of Plants Planted in Schemes'
     )
 
 # Chart 2: Number of Plantations vs Scheme grouped by Year
@@ -167,7 +158,7 @@ with row1_col2:
         data=chart_df,
         x_axis='scheme',
         y_axis='name',
-        color_group='year_cleaned',
+        color_group='year',
         x_title='Scheme',
         y_title='Number of Plantations',
         color_title='Year',
@@ -190,7 +181,28 @@ with row2_col1:
 
 # Chart 4: Number of Plantations vs Division grouped by Range
 with row2_col2:
-    create_grouped_bar_chart(
+        create_donut_chart(
+        data=chart_df,
+        category_col='plantation_type',
+        value_col='number_of_seedlings',
+        subheader='4. No of Plants in Plantation'
+    )
+
+# Donut Chart: Number of seedlings planted under each scheme
+with row3_col1:
+        create_grouped_bar_chart(
+        data=chart_df,
+        x_axis='year',
+        y_axis='name',
+        color_group='plantation_type',
+        x_title='Year of Plantation',
+        y_title='Number of Plantations',
+        color_title='Plantation Type',
+        subheader='5. Plantations by Year and Type'
+    )
+
+with row3_col2:
+        create_grouped_bar_chart(
         data=chart_df,
         x_axis='division',
         y_axis='name',
@@ -198,22 +210,5 @@ with row2_col2:
         x_title='Division',
         y_title='Number of Plantations',
         color_title='Range',
-        subheader='4. Plantations by Division and Range'
-    )
-
-# Donut Chart: Number of seedlings planted under each scheme
-with row3_col1:
-    create_donut_chart(
-        data=chart_df,
-        category_col='scheme',
-        value_col='number_of_seedlings',
-        subheader='5. No of Seedlings Planted Under Each Scheme'
-    )
-
-with row3_col2:
-    create_donut_chart(
-        data=chart_df,
-        category_col='plantation_type',
-        value_col='number_of_seedlings',
-        subheader='6. No of Seedlings Planted Under Each Type of Plantation'
+        subheader='6. Plantations by Division and Range'
     )
