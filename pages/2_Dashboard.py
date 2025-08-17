@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import folium
 from streamlit_folium import st_folium
-from shapely.geometry import shape
+from shapely.geometry import shape, mapping
 import json
 import pandas as pd
 import os
@@ -213,7 +213,40 @@ folium.LayerControl().add_to(m)
 st_folium(m, width='100%', height=600)
 
 st.markdown("---")
-st.subheader("Plantation Details")
+
+# --- Plantation Details Table and Download ---
+col_header, col_download = st.columns([0.7, 0.3])
+with col_header:
+    st.subheader("Plantation Details")
+
+with col_download:
+    if not filtered_display_df.empty:
+        # Convert filtered plantations to a GeoJSON string
+        features = []
+        for p in filtered_plantations:
+            properties = {k: v for k, v in p.items() if k != 'geometry'}
+            geom = p.get('geometry')
+            if geom:
+                feature = {
+                    "type": "Feature",
+                    "geometry": mapping(geom),
+                    "properties": properties
+                }
+                features.append(feature)
+        
+        geojson_collection = {
+            "type": "FeatureCollection",
+            "features": features
+        }
+        filtered_geojson_str = json.dumps(geojson_collection, indent=2)
+
+        st.download_button(
+            label="📥 Download Filtered Data (GeoJSON)",
+            data=filtered_geojson_str,
+            file_name="filtered_plantations.geojson",
+            mime="application/json",
+            use_container_width=True
+        )
 
 # --- Data Table Display ---
 if not filtered_display_df.empty:
@@ -232,7 +265,8 @@ else:
     st.info("No data matches the table filters.")
 
 st.markdown("---")
-st.subheader("Data Management")
+st.subheader("Plantations Data")
+st.markdown("Download the complete plantations data in GeoJSON format.")
 with open(DATA_FILE, "rb") as fp:
     st.download_button(
         label="Download GeoJSON",

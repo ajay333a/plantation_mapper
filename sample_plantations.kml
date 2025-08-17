@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Untitled layer</name>
+    <Style id="line-000000-1200-normal">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.2</width>
+      </LineStyle>
+    </Style>
+    <Style id="line-000000-1200-highlight">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.8</width>
+      </LineStyle>
+    </Style>
+    <StyleMap id="line-000000-1200">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#line-000000-1200-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#line-000000-1200-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-000000-1200-77-nodesc-normal">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.2</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-000000-1200-77-nodesc-highlight">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.8</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4d000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-000000-1200-77-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-000000-1200-77-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-000000-1200-77-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Placemark>
+      <name>Sample plantation-3</name>
+      <styleUrl>#poly-000000-1200-77-nodesc</styleUrl>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <tessellate>1</tessellate>
+            <coordinates>
+              76.8886465,15.3979789,0
+              76.8874449,15.3977306,0
+              76.8860501,15.3973169,0
+              76.8847198,15.397379,0
+              76.8852133,15.3969031,0
+              76.885342,15.3958274,0
+              76.8857068,15.3950206,0
+              76.8871016,15.3938827,0
+              76.8892259,15.3925173,0
+              76.8899125,15.3921863,0
+              76.8906421,15.392207,0
+              76.8910069,15.3925587,0
+              76.891715,15.3927035,0
+              76.8919939,15.3932621,0
+              76.8918866,15.3939655,0
+              76.8915433,15.3947516,0
+              76.8903202,15.3969652,0
+              76.8886465,15.3979789,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>Sample 4 Roadside</name>
+      <description><![CDATA[Year: 2023-24<br>Range: Siruguppa<br>Division: Ballary]]></description>
+      <styleUrl>#line-000000-1200</styleUrl>
+      <LineString>
+        <tessellate>1</tessellate>
+        <coordinates>
+          76.8998045,15.4152659,0
+          76.8974657,15.4152038,0
+          76.896779,15.4151418,0
+          76.8954915,15.4144591,0
+          76.8946332,15.4140247,0
+          76.8910927,15.4129698,0
+          76.8887109,15.4130111,0
+          76.8866724,15.4127836,0
+          76.8857927,15.4121734,0
+          76.8833814,15.4114057,0
+          76.882916,15.4113632,0
+          76.8827296,15.4117138,0
+          76.882389,15.4123011,0
+          76.8820698,15.4125367,0
+          76.880321,15.4135619,0
+          76.8787546,15.4148677,0
+          76.8759222,15.4169414,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>

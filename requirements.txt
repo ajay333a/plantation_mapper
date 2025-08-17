@@ -1,6 +1,9 @@
+
 streamlit
+pandas
+shapely
+altair
 fastkml
 folium
 streamlit-folium
-shapely
-lxml
+pytest
